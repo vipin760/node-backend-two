@@ -37,4 +37,4 @@ jobs:
 
       # Step 6: Deploy to Firebase
       - name: Deploy to Firebase
-        run: firebase deploy --project ${{ secrets.FIREBASE_TOKEN }} --non-interactive
+        run: firebase deploy --project ${{ secrets.FIREBASE_PROJECTID }} --non-interactive
