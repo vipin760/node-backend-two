@@ -39,7 +39,7 @@ jobs:
 
       # Step 6: Build the project (if needed)
       - name: Build the project
-        run: npm run build
+        run: npm start
 
       # Step 7: Deploy to Firebase
       - name: Deploy to Firebase
