@@ -27,6 +27,8 @@ jobs:
 
       # Step 4: Authenticate with Firebase using Service Account
       - name: Authenticate with Firebase
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         run: |
           echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > firebase-key.json
           export GOOGLE_APPLICATION_CREDENTIALS=firebase-key.json
@@ -37,4 +39,4 @@ jobs:
 
       # Step 6: Deploy to Firebase
       - name: Deploy to Firebase
-        run: firebase deploy --project ${{ secrets.FIREBASE_PROJECTID }} --non-interactive
+        run: firebase deploy --project ${{ secrets.FIREBASE_PROJECT_ID }} --non-interactive
