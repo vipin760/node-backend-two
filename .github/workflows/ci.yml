@@ -1,4 +1,4 @@
-name: Node.js CI/CD Pipeline
+name: Firebase CI/CD
 
 on:
   push:
@@ -6,27 +6,43 @@ on:
       - master  # Trigger the workflow on pushes to the 'main' branch
 
 jobs:
-  build:
+  deploy:
+    name: Deploy to Firebase
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Checkout the repository
-    - name: Checkout Code
-      uses: actions/checkout@v3
+      # Step 1: Check out the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    # Step 2: Set up Node.js environment
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '16' # Use the required Node.js version
+      # Step 2: Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # Adjust the Node.js version as needed
 
-    # Step 3: Install dependencies
-    - name: Install Dependencies
-      run: npm install
+      # Step 3: Install Firebase CLI
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
 
-    # Step 4: Run tests
-    - name: Run Tests
-      run: npm test
+      # Step 4: Authenticate with Firebase
+      - name: Authenticate with Firebase
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > firebase-key.json
+          export GOOGLE_APPLICATION_CREDENTIALS=firebase-key.json
 
-    # Step 5: Deploy to the server
-    deploy
+      # Step 5: Install project dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # Step 6: Build the project (if needed)
+      - name: Build the project
+        run: npm run build
+
+      # Step 7: Deploy to Firebase
+      - name: Deploy to Firebase
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: firebase deploy --project ${{ secrets.FIREBASE_PROJECT_ID }} --non-interactive
